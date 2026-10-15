@@ -1,7 +1,9 @@
 # 🛋️ Bulánci: Školní řežba (Classroom Edition)
 
 > **Projekt pro seminář z informatiky**  
-> 2D akční střílečka inspirovaná legendární českou hrou *Bulánci*, přenesená do školního prostředí.
+> 2D akční střílečka inspirovaná legendární českou hrou *Bulánci*, přenesená do školního prostředí.  
+>  
+> 🌐 **[Spustit hru přímo v prohlížeči (GitHub Pages)](https://banjista.github.io/bulanci-skolni-rezba/)**
 
 ---
 

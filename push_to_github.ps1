@@ -16,8 +16,8 @@ Write-Host "=========================================" -ForegroundColor Cyan
 
 # 1. Kontrola dostupnosti programu Git
 $possiblePaths = @(
-    "$PSScriptRoot\portable_git\cmd\git.exe",
-    "U:\Python\Bulanci2026\portable_git\cmd\git.exe",
+    "$PSScriptRoot\.portable_git\cmd\git.exe",
+    "U:\Python\Bulanci2026\.portable_git\cmd\git.exe",
     "C:\Program Files\Git\cmd\git.exe",
     "$env:LOCALAPPDATA\Programs\Git\cmd\git.exe",
     "C:\Program Files (x86)\Git\cmd\git.exe"

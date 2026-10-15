@@ -3,5 +3,7 @@ __pycache__/
 *$py.class
 .vscode/
 .idea/
+.portable_git/
 portable_git/
+build/
 *.zip

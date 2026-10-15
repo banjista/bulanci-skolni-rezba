@@ -4,6 +4,7 @@ Spouští hlavní herní smyčku, menu a přepínání herních režimů.
 """
 
 import sys
+import asyncio
 import pygame
 from settings import (
     WINDOW_WIDTH, WINDOW_HEIGHT, FPS, WINDOW_TITLE,
@@ -50,7 +51,7 @@ def render_pillow_preview(screen, x, y, color, angle=0):
     rot_surf = pygame.transform.rotate(surf, -angle)
     screen.blit(rot_surf, rot_surf.get_rect(center=(x, y)))
 
-def main():
+async def main():
     pygame.init()
     pygame.display.set_caption(WINDOW_TITLE)
     screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -208,9 +209,10 @@ def main():
                 game_instance.draw(screen)
 
         pygame.display.flip()
+        await asyncio.sleep(0)
 
     pygame.quit()
     sys.exit()
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
