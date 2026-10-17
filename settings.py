@@ -112,6 +112,10 @@ WEAPON_CONFIG = {
     }
 }
 
+# --- Léčivé bonusy (Svačina) ---
+PICKUP_HEALTH_AMOUNT = 35              # Počet doplněných životů
+COLOR_SNACK = (230, 60, 60)            # Červené jablíčko se svačinou
+
 # --- Ovládání ---
 PLAYER_1_KEYS = {
     "up": pygame.K_w,

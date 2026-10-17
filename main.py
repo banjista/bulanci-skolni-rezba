@@ -197,7 +197,8 @@ async def main():
             screen.blit(info_font.render("• [X] Kružítko: 4 broky křídy najednou", True, COLOR_WHITE), (col2_x, y + 62))
             screen.blit(info_font.render("• [R] Pravítko: Rychlopalný křídový samopal", True, COLOR_WHITE), (col2_x, y + 90))
             screen.blit(info_font.render("• [H] Mokrá houba: Exploduje s plošným poškozením!", True, (100, 200, 255)), (col2_x, y + 118))
-            screen.blit(info_font.render("• Cíl hry: Získej 7 sestřelů v učebně dříve než ostatní!", True, (240, 220, 110)), (col2_x, y + 160))
+            screen.blit(info_font.render("• [+] Školní svačina: Jablko na lavici vyléčí +35 HP zraněnému!", True, (130, 240, 150)), (col2_x, y + 146))
+            screen.blit(info_font.render("• Cíl hry: Získej 7 sestřelů v učebně dříve než ostatní!", True, (240, 220, 110)), (col2_x, y + 176))
 
             # Návrat
             back_surf = menu_font.render("Stiskni [ESC] nebo [ENTER] pro návrat do menu", True, COLOR_YELLOW)
