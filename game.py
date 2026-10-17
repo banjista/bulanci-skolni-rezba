@@ -173,6 +173,16 @@ class Game:
             w_surf = small_font.render(w_text, True, p.weapon.config["color"])
             surface.blit(w_surf, (x + 26, 21))
 
+        # Zobrazení stavu zvuku a nápovědy k pauze
+        snd_mgr = SoundManager.get_instance()
+        snd_label = "[M] Zvuk: VYP" if snd_mgr.muted else "[M] Zvuk: ZAP"
+        snd_color = (255, 120, 120) if snd_mgr.muted else (170, 220, 180)
+        snd_surf = small_font.render(snd_label, True, snd_color)
+        surface.blit(snd_surf, (WINDOW_WIDTH - 110, 6))
+
+        pause_hint = small_font.render("[P] Pauza", True, (200, 210, 220))
+        surface.blit(pause_hint, (WINDOW_WIDTH - 110, 20))
+
     def _draw_victory_screen(self, surface):
         """Vítězná obrazovka po dosažení limitu sestřelů."""
         overlay = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)

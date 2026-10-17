@@ -13,6 +13,7 @@ class SoundManager:
 
     def __init__(self):
         self.enabled = False
+        self.muted = False
         self.sounds = {}
         try:
             if not pygame.mixer.get_init():
@@ -94,9 +95,14 @@ class SoundManager:
         # 10. Školní zvonění na hodinu / konec kola
         self.sounds["bell"] = self._generate_tone(1200, 1150, 0.6, volume=0.5, wave_type="square")
 
+    def toggle_mute(self):
+        """Přepne stav ztlumení všech zvuků."""
+        self.muted = not self.muted
+        return self.muted
+
     def play(self, sound_name):
         """Přehraje daný zvuk pokud je k dispozici."""
-        if not self.enabled:
+        if not self.enabled or self.muted:
             return
         sound = self.sounds.get(sound_name)
         if sound:

@@ -89,6 +89,10 @@ async def main():
                 running = False
                 break
 
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_m:
+                sound_mgr.toggle_mute()
+                continue
+
             if state == "MENU":
                 if event.type == pygame.KEYDOWN:
                     if event.key in (pygame.K_UP, pygame.K_w):
@@ -116,12 +120,23 @@ async def main():
 
             elif state == "GAME":
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
+                    if event.key == pygame.K_p and not (game_instance and game_instance.game_over):
+                        state = "PAUSED"
+                    elif event.key == pygame.K_ESCAPE:
                         state = "MENU"
                         sound_mgr.play("shoot_smg")
                     elif game_instance and game_instance.game_over and event.key in (pygame.K_SPACE, pygame.K_RETURN):
                         # Restart nového kola
                         game_instance = Game(mode=game_instance.mode)
+
+            elif state == "PAUSED":
+                if event.type == pygame.KEYDOWN:
+                    if event.key in (pygame.K_p, pygame.K_SPACE, pygame.K_RETURN):
+                        state = "GAME"
+                        sound_mgr.play("shoot_smg")
+                    elif event.key == pygame.K_ESCAPE:
+                        state = "MENU"
+                        sound_mgr.play("shoot_smg")
 
         # Vykreslování podle stavu
         if state == "MENU":
@@ -162,7 +177,7 @@ async def main():
                 screen.blit(m_surf, (WINDOW_WIDTH // 2 - 230, item_y))
 
             # Spodní nápověda ovládání menu
-            hint_surf = info_font.render("Pohyb v menu: [ŠIPKY] / [W/S] | Potvrdit: [ENTER] / [MEZERNÍK]", True, (160, 210, 180))
+            hint_surf = info_font.render("Pohyb v menu: [ŠIPKY] / [W/S] | Potvrdit: [ENTER] | [M] Ztlumit/zapnout zvuk", True, (160, 210, 180))
             hint_rect = hint_surf.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT - 60))
             screen.blit(hint_surf, hint_rect)
 
@@ -176,37 +191,74 @@ async def main():
             # Dvě tabulky: Hráči a Zbraně
             col1_x = 90
             col2_x = WINDOW_WIDTH // 2 + 30
-            y = 150
+            y = 140
 
             # 1. Hráč 1
             h1_title = menu_font.render("Hráč 1 (Červený Šprt):", True, COLOR_PLAYER_1)
             screen.blit(h1_title, (col1_x, y))
-            screen.blit(info_font.render("• Pohyb: [W] [S] [A] [D]", True, COLOR_WHITE), (col1_x, y + 34))
-            screen.blit(info_font.render("• Střelba: [MEZERNÍK] (Space)", True, COLOR_WHITE), (col1_x, y + 62))
+            screen.blit(info_font.render("• Pohyb: [W] [S] [A] [D]", True, COLOR_WHITE), (col1_x, y + 30))
+            screen.blit(info_font.render("• Střelba: [MEZERNÍK] (Space)", True, COLOR_WHITE), (col1_x, y + 54))
 
             # 2. Hráč 2
             h2_title = menu_font.render("Hráč 2 (Modrý Záškolák):", True, COLOR_PLAYER_2)
-            screen.blit(h2_title, (col1_x, y + 115))
-            screen.blit(info_font.render("• Pohyb: [ŠIPKY] (Nahoru, Dolů, Vlevo, Vpravo)", True, COLOR_WHITE), (col1_x, y + 149))
-            screen.blit(info_font.render("• Střelba: [PRAVÝ CTRL] / [ENTER] / [NUMPAD 0]", True, COLOR_WHITE), (col1_x, y + 177))
+            screen.blit(h2_title, (col1_x, y + 96))
+            screen.blit(info_font.render("• Pohyb: [ŠIPKY] (Nahoru, Dolů, Vlevo, Vpravo)", True, COLOR_WHITE), (col1_x, y + 126))
+            screen.blit(info_font.render("• Střelba: [PRAVÝ CTRL] / [ENTER] / [NUMPAD 0]", True, COLOR_WHITE), (col1_x, y + 150))
+
+            # Speciální klávesy
+            spec_title = menu_font.render("Herní funkce:", True, (160, 210, 255))
+            screen.blit(spec_title, (col1_x, y + 190))
+            screen.blit(info_font.render("• [P] Pozastavit hru (Pauza)", True, COLOR_WHITE), (col1_x, y + 218))
+            screen.blit(info_font.render("• [M] Ztlumit / zapnout zvuk (Mute)", True, COLOR_WHITE), (col1_x, y + 242))
 
             # 3. Zbraně a pravidla
             w_title = menu_font.render("Školní zbraně (Bonusy na lavicích):", True, COLOR_YELLOW)
             screen.blit(w_title, (col2_x, y))
-            screen.blit(info_font.render("• [K] Křídomet: 5 nábojů, přesný, přebíjí", True, COLOR_WHITE), (col2_x, y + 34))
-            screen.blit(info_font.render("• [X] Kružítko: 4 broky křídy najednou", True, COLOR_WHITE), (col2_x, y + 62))
-            screen.blit(info_font.render("• [R] Pravítko: Rychlopalný křídový samopal", True, COLOR_WHITE), (col2_x, y + 90))
-            screen.blit(info_font.render("• [H] Mokrá houba: Exploduje s plošným poškozením!", True, (100, 200, 255)), (col2_x, y + 118))
-            screen.blit(info_font.render("• Cíl hry: Získej 7 sestřelů v učebně dříve než ostatní!", True, (240, 220, 110)), (col2_x, y + 160))
+            screen.blit(info_font.render("• [K] Křídomet: 5 nábojů, přesný, přebíjí", True, COLOR_WHITE), (col2_x, y + 30))
+            screen.blit(info_font.render("• [X] Kružítko: 4 broky křídy najednou", True, COLOR_WHITE), (col2_x, y + 54))
+            screen.blit(info_font.render("• [R] Pravítko: Rychlopalný křídový samopal", True, COLOR_WHITE), (col2_x, y + 78))
+            screen.blit(info_font.render("• [H] Mokrá houba: Exploduje s plošným poškozením!", True, (100, 200, 255)), (col2_x, y + 102))
+            screen.blit(info_font.render("• Cíl hry: Získej 7 sestřelů dříve než ostatní!", True, (240, 220, 110)), (col2_x, y + 138))
 
             # Návrat
             back_surf = menu_font.render("Stiskni [ESC] nebo [ENTER] pro návrat do menu", True, COLOR_YELLOW)
-            screen.blit(back_surf, back_surf.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT - 75)))
+            screen.blit(back_surf, back_surf.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT - 45)))
 
         elif state == "GAME":
             if game_instance:
                 game_instance.update(dt, keys)
                 game_instance.draw(screen)
+
+        elif state == "PAUSED":
+            if game_instance:
+                game_instance.draw(screen)
+
+            # Poloprůhledný overlay pro pauzu
+            overlay = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)
+            overlay.fill((15, 20, 25, 200))
+            screen.blit(overlay, (0, 0))
+
+            box_w, box_h = 520, 250
+            box_x = (WINDOW_WIDTH - box_w) // 2
+            box_y = (WINDOW_HEIGHT - box_h) // 2
+            pause_rect = pygame.Rect(box_x, box_y, box_w, box_h)
+
+            pygame.draw.rect(screen, (35, 42, 52), pause_rect, border_radius=12)
+            pygame.draw.rect(screen, COLOR_YELLOW, pause_rect, width=3, border_radius=12)
+
+            p_title = title_font.render("HRA POZASTAVENA", True, COLOR_YELLOW)
+            screen.blit(p_title, p_title.get_rect(center=(WINDOW_WIDTH // 2, box_y + 48)))
+
+            p_cont = menu_font.render("[P] / [ENTER] Pokračovat ve hře", True, COLOR_WHITE)
+            screen.blit(p_cont, p_cont.get_rect(center=(WINDOW_WIDTH // 2, box_y + 110)))
+
+            p_esc = menu_font.render("[ESC] Návrat do hlavního menu", True, (220, 180, 180))
+            screen.blit(p_esc, p_esc.get_rect(center=(WINDOW_WIDTH // 2, box_y + 155)))
+
+            sound_status = "VYPNUTÝ (Ztlumeno)" if sound_mgr.muted else "ZAPNUTÝ"
+            sound_col = (255, 120, 120) if sound_mgr.muted else (120, 255, 150)
+            p_snd = info_font.render(f"[M] Zvuk: {sound_status}", True, sound_col)
+            screen.blit(p_snd, p_snd.get_rect(center=(WINDOW_WIDTH // 2, box_y + 205)))
 
         pygame.display.flip()
         await asyncio.sleep(0)
