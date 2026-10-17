@@ -12,7 +12,7 @@ from world.map import ClassroomMap
 from world.particles import ParticleSystem
 from entities.player import Player
 from entities.bot import Bot
-from entities.pickup import WeaponPickup
+from entities.pickup import WeaponPickup, HealthPickup
 from audio.sound_gen import SoundManager
 
 class Game:
@@ -69,6 +69,10 @@ class Game:
         # 2. Spawnování bonusových zbraní na školních místech
         for spot in self.map.pickup_spots[:6]:
             self.pickups.append(WeaponPickup(spot[0], spot[1]))
+
+        # 3. Spawnování školních svačin (jablíček) pro léčení na zbývajících lavicích
+        for spot in self.map.pickup_spots[6:]:
+            self.pickups.append(HealthPickup(spot[0], spot[1]))
 
         # Školní zvonění na začátku zápasu
         SoundManager.get_instance().play("bell")

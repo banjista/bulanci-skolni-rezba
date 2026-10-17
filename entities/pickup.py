@@ -70,3 +70,64 @@ class WeaponPickup:
         text_surf = font.render(char, True, cfg["color"])
         text_rect = text_surf.get_rect(center=draw_pos)
         surface.blit(text_surf, text_rect)
+
+
+class HealthPickup:
+    """Školní svačina (červené jablko), která doplní zraněnému polštářku životy."""
+    def __init__(self, x, y, heal_amount=35):
+        self.pos = pygame.math.Vector2(x, y)
+        self.heal_amount = heal_amount
+        self.active = True
+        self.respawn_timer = 0.0
+        self.respawn_delay = 12.0
+        self.anim_timer = random.uniform(0, 10)
+        self.radius = 16
+
+    def update(self, dt):
+        self.anim_timer += dt * 3.5
+        if not self.active:
+            self.respawn_timer -= dt
+            if self.respawn_timer <= 0:
+                self.active = True
+
+    def check_pickup(self, pillow, particle_system):
+        """Ověří, zda zraněný polštářek sebral svačinu."""
+        if not self.active or not pillow.alive:
+            return False
+        # Svačinu má smysl sebrat jen když má polštářek méně než maximum životů
+        if pillow.health >= pillow.max_health:
+            return False
+
+        dist = self.pos.distance_to(pillow.pos)
+        if dist <= self.radius + pillow.radius:
+            pillow.health = min(pillow.max_health, pillow.health + self.heal_amount)
+            SoundManager.get_instance().play("pickup")
+            # Efekt zelených peříček radosti
+            particle_system.add_feather_burst(self.pos.x, self.pos.y, (120, 240, 140), count=14)
+            self.active = False
+            self.respawn_timer = self.respawn_delay
+            return True
+        return False
+
+    def draw(self, surface):
+        if not self.active:
+            return
+
+        float_y = self.pos.y + math.sin(self.anim_timer) * 4.0
+        draw_pos = (int(self.pos.x), int(float_y))
+
+        # 1. Zelená záře
+        glow_surf = pygame.Surface((40, 40), pygame.SRCALPHA)
+        pygame.draw.circle(glow_surf, (80, 220, 110, 65), (20, 20), 18)
+        surface.blit(glow_surf, (draw_pos[0] - 20, draw_pos[1] - 20))
+
+        # 2. Jablíčko
+        pygame.draw.circle(surface, (230, 60, 60), draw_pos, 12)
+        pygame.draw.circle(surface, (160, 30, 30), draw_pos, 12, width=2)
+        # Stopka jablíčka
+        pygame.draw.line(surface, (100, 60, 20), (draw_pos[0], draw_pos[1] - 12), (draw_pos[0] + 3, draw_pos[1] - 16), 2)
+        pygame.draw.circle(surface, (80, 200, 80), (draw_pos[0] + 4, draw_pos[1] - 14), 2)
+
+        # 3. Křížek zdraví (+) uprostřed
+        pygame.draw.line(surface, (255, 255, 255), (draw_pos[0] - 5, draw_pos[1]), (draw_pos[0] + 5, draw_pos[1]), 2)
+        pygame.draw.line(surface, (255, 255, 255), (draw_pos[0], draw_pos[1] - 5), (draw_pos[0], draw_pos[1] + 5), 2)
